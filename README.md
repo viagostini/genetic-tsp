@@ -10,8 +10,8 @@ improvements both to the code itself and to the Streamlit app.
 
 is instead more interested in displaying the process visually.
 
-### Screenshot :camera:
-![](images/ga_tsp_app1.png)
+### Screen capture :video_camera:
+![](images/streamlit-app-2021-05-08-15-05-17.gif)
 
 ### Run it locally :microscope:
 Right now this project is not hosted anywhere so if you'd like to test it, you can do so
