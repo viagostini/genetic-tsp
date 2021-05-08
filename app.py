@@ -20,7 +20,7 @@ solution.
 
 select_dataset = st.sidebar.selectbox(
     label="Select a dataset",
-    options=("dj38.in", "uy734.in"),
+    options=("p01.in", "dj15.in", "dj38.in", "uy734.in"),
 )
 
 num_generations = st.sidebar.number_input(
