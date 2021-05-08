@@ -17,43 +17,42 @@ solution.
 
 """
 
+with st.sidebar:
+    select_dataset = st.selectbox(
+        label="Select a dataset",
+        options=("p01.in", "dj15.in", "dj38.in", "uy734.in"),
+    )
 
-select_dataset = st.sidebar.selectbox(
-    label="Select a dataset",
-    options=("p01.in", "dj15.in", "dj38.in", "uy734.in"),
-)
+    num_generations = st.number_input(
+        "Number of generations", min_value=10, max_value=1000, step=10
+    )
 
-num_generations = st.sidebar.number_input(
-    "Number of generations", min_value=10, max_value=1000, step=10
-)
+    population_size = st.number_input(
+        "Population size", min_value=10, max_value=1000, step=10
+    )
 
-population_size = st.sidebar.number_input(
-    "Population size", min_value=10, max_value=1000, step=10
-)
+    hof_size = st.number_input(
+        "Hall Of Fame size",
+        min_value=1,
+        max_value=population_size,
+        help="Number of fittest individuals to carry over to the next generation. \
+            Must be smaller than population size",
+    )
 
-hof_size = st.sidebar.number_input(
-    "Hall Of Fame size",
-    min_value=1,
-    max_value=population_size,
-    help="Number of fittest individuals to carry over to the next generation. \
-        Must be smaller than population size",
-)
+    crossover_prob = st.number_input(
+        "Crossover probability", min_value=0.0, max_value=1.0, step=0.01, value=0.8
+    )
 
-crossover_prob = st.sidebar.number_input(
-    "Crossover probability", min_value=0.0, max_value=1.0, step=0.01, value=0.8
-)
+    mutation_prob = st.number_input(
+        "Mutation probability", min_value=0.0, max_value=1.0, value=0.2
+    )
 
-mutation_prob = st.sidebar.number_input(
-    "Mutation probability", min_value=0.0, max_value=1.0, value=0.2
-)
+    random_seed_checkbox = st.checkbox("Set a random seed?")
 
-random_seed_checkbox = st.sidebar.checkbox("Set a random seed?")
-
-
-if random_seed_checkbox:
-    random_seed = st.sidebar.number_input("Random seed", min_value=0, step=1, value=42)
-    random.seed(random_seed)
-    np.random.seed(random_seed)
+    if random_seed_checkbox:
+        random_seed = st.number_input("Random seed", min_value=0, step=1, value=42)
+        random.seed(random_seed)
+        np.random.seed(random_seed)
 
 ## Run the Genetic Algorithm
 pop, stats, logbook, hof = genetic_tsp(
