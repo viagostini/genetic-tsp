@@ -1,7 +1,9 @@
 import array
 import random
 
+import matplotlib.pyplot as plt
 import numpy as np
+import streamlit as st
 from deap import algorithms, base, creator, tools
 
 from utils import read_input
@@ -14,6 +16,10 @@ def genetic_tsp(
     hof_size: int,
     crossover_prob: float,
     mutation_prob: float,
+    chart,
+    plot,
+    progress_bar,
+    current_distance,
 ):
     cities = read_input(f"data/{dataset_name}")
     NUM_CITIES = len(cities)
@@ -45,13 +51,16 @@ def genetic_tsp(
     hof = tools.HallOfFame(hof_size)
     stats = tools.Statistics(lambda ind: ind.fitness.values)
     stats.register("avg", np.mean)
-    stats.register("std", np.std)
     stats.register("min", np.min)
-    stats.register("max", np.max)
 
     pop, logbook = perform_evolution(
+        cities,
         pop,
         toolbox,
+        chart,
+        plot,
+        progress_bar,
+        current_distance,
         cxpb=crossover_prob,
         mutpb=mutation_prob,
         ngen=num_generations,
@@ -71,8 +80,13 @@ def evalTSP(individual, distance_map):
 
 
 def perform_evolution(
+    cities,
     population,
     toolbox,
+    chart,
+    plot,
+    progress_bar,
+    current_distance,
     cxpb,
     mutpb,
     ngen,
@@ -96,6 +110,26 @@ def perform_evolution(
     logbook.record(gen=0, nevals=len(invalid_ind), **record)
     if verbose:
         print(logbook.stream)
+
+    progress_bar.progress(0)
+
+    current_distance.text("")
+
+    solution = halloffame[0].tolist()
+    solution.append(solution[0])
+
+    fig, ax = plt.subplots()
+
+    ax.plot(
+        [cities[i].x for i in solution],
+        [cities[i].y for i in solution],
+        "-o",
+    )
+    ax.plot(cities[0].x, cities[0].y, "r*")
+
+    plot.pyplot(fig)
+
+    chart.line_chart()
 
     # Begin the generational process
     for gen in range(1, ngen + 1):
@@ -125,5 +159,22 @@ def perform_evolution(
         logbook.record(gen=gen, nevals=len(invalid_ind), **record)
         if verbose:
             print(logbook.stream)
+
+        progress_bar.progress(int(gen / ngen * 100))
+        current_distance.write(f"Current distance: {logbook[gen]['min']}")
+        chart.add_rows({"Distance": [logbook[gen]["min"]]})
+
+        solution = halloffame[0].tolist()
+        solution.append(solution[0])
+        ax.clear()
+        ax.plot(
+            [cities[i].x for i in solution],
+            [cities[i].y for i in solution],
+            "-o",
+        )
+        ax.plot(cities[0].x, cities[0].y, "r*")
+
+        plot.pyplot(fig)
+    progress_bar.empty()
 
     return population, logbook
