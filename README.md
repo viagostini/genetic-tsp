@@ -5,16 +5,14 @@ Demo of genetic algorithm solver for the Traveling Salesman Problem.
 I always wanted to try this because I find genetic algorithms really mind blowing. Also,
 this is probably going to be the code for a tech talk of mine on Elo7.
 
-Right now there is an initial working version of the app, but I'm considering a few
-improvements both to the code itself and to the Streamlit app.
-
-is instead more interested in displaying the process visually.
+This is not meant to have great performance (neither in terms of speed or accuracy), it
+is instead more focused in displaying the process visually and serve as an introduction
+to the topic of genetic algorithms.
 
 ### Screen capture :video_camera:
 ![](images/streamlit-app-2021-05-08-15-05-17.gif)
 
 ### Run it locally :microscope:
 Right now this project is not hosted anywhere so if you'd like to test it, you can do so
-by setting up a Python environment and install the required packages with
-`pip install -r requirements.txt` and then starting the Streamlit server with
-`streamlit run app.py` and accessing `http://localhost:8501/`.
+by running `make run`. Once it builds the image and starts the server, you can access
+it at `http://localhost:8501/`.
