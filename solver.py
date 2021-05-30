@@ -2,7 +2,6 @@ import math
 import random
 
 import numpy as np
-from numpy.random import permutation
 
 from utils import pairwise, random_interval, random_population, read_input
 
@@ -11,12 +10,6 @@ np.random.seed(42)
 
 
 cities = None
-
-
-def random_interval(individual):
-    i, j = random.sample(range(len(individual)), k=2)
-    i, j = min(i, j), max(i, j)
-    return i, j
 
 
 def crossover(ind1, ind2):
@@ -93,16 +86,6 @@ def genetic_tsp(dataset_name, num_generations, population_size, mutation_prob):
 
         if gen % 10 == 0:
             print(f"[Gen {gen}] - Current Distance: {best_distance}")
-
-    return best_solution, best_distance
-
-
-def solve(
-    population_size,
-    num_genes,
-    num_generations,
-    mutation_prob,
-):
 
     return best_solution, best_distance
 
