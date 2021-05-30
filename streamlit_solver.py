@@ -1,8 +1,9 @@
 import math
 import random
+from copy import copy
 
+import matplotlib.pyplot as plt
 import numpy as np
-from numpy.random import permutation
 
 from utils import pairwise, random_interval, random_population, read_input
 
@@ -13,28 +14,22 @@ np.random.seed(42)
 cities = None
 
 
-def random_interval(individual):
-    i, j = random.sample(range(len(individual)), k=2)
-    i, j = min(i, j), max(i, j)
-    return i, j
+def crossover(parent1, parent2):
+    size = len(parent1)
 
+    i, j = random_interval(parent1)
 
-def crossover(ind1, ind2):
-    size = len(ind1)
-
-    i, j = random_interval(ind1)
-
-    c1 = ind1[i:j]
-    c2 = ind2[i:j]
+    c1 = parent1[i:j]
+    c2 = parent2[i:j]
 
     for k in range(size):
         child_pos = (j + k) % size
 
-        if ind2[child_pos] not in c1:
-            c1.append(ind2[child_pos])
+        if parent2[child_pos] not in c1:
+            c1.append(parent2[child_pos])
 
-        if ind1[child_pos] not in c2:
-            c2.append(ind1[child_pos])
+        if parent1[child_pos] not in c2:
+            c2.append(parent1[child_pos])
 
     c1 = c1[-i:] + c1[:-i]
     c2 = c2[-i:] + c2[:-i]
@@ -77,11 +72,43 @@ def rank_selection(population, num_selected):
     return pop_by_fitness[:num_selected]
 
 
-def genetic_tsp(dataset_name, num_generations, population_size, mutation_prob):
+def genetic_tsp(
+    dataset_name,
+    num_generations,
+    population_size,
+    mutation_prob,
+    chart,
+    plot,
+    progress_bar,
+    current_distance,
+):
     global cities
     cities = read_input(f"data/{dataset_name}")
 
     population = random_population(population_size, len(cities))
+
+    pop_fitness = [evaluate_fitness(individual) for individual in population]
+    best_solution = population[np.argmax(pop_fitness)]
+    best_distance = 1 / evaluate_fitness(best_solution)
+
+    progress_bar.progress(0)
+
+    current_distance.text("")
+
+    solution = copy(best_solution)
+    solution.append(solution[0])
+
+    fig, ax = plt.subplots()
+
+    ax.plot(
+        [cities[i].x for i in solution],
+        [cities[i].y for i in solution],
+        "-o",
+    )
+
+    plot.pyplot(fig)
+
+    chart.line_chart()
 
     for gen in range(num_generations):
         population_with_offspring = breed(population, mutation_prob)
@@ -91,27 +118,20 @@ def genetic_tsp(dataset_name, num_generations, population_size, mutation_prob):
         best_solution = population[np.argmax(pop_fitness)]
         best_distance = 1 / evaluate_fitness(best_solution)
 
-        if gen % 10 == 0:
-            print(f"[Gen {gen}] - Current Distance: {best_distance}")
+        progress_bar.progress(int(gen / num_generations * 100))
+        current_distance.write(f"Current distance: {best_distance}")
+        chart.add_rows({"Distance": [best_distance]})
+
+        solution = copy(best_solution)
+        solution.append(solution[0])
+        ax.clear()
+        ax.plot(
+            [cities[i].x for i in solution],
+            [cities[i].y for i in solution],
+            "-o",
+        )
+
+        plot.pyplot(fig)
+    progress_bar.empty()
 
     return best_solution, best_distance
-
-
-def solve(
-    population_size,
-    num_genes,
-    num_generations,
-    mutation_prob,
-):
-
-    return best_solution, best_distance
-
-
-best_solution, best_distance = genetic_tsp(
-    dataset_name="dj15.in",
-    num_generations=30,
-    population_size=20,
-    mutation_prob=0.1,
-)
-
-print(f"Best distance: {best_distance}")
