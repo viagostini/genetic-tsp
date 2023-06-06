@@ -44,7 +44,7 @@ with st.sidebar:
         random.seed(random_seed)
         np.random.seed(random_seed)
 
-col1, col2 = st.beta_columns(2)
+col1, col2 = st.columns(2)
 
 col1.header("Best solution")
 progress_bar = st.empty()
