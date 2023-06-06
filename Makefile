@@ -8,3 +8,6 @@ run:
 
 dev:
 	@docker run --rm -p 8501:8501 -v $(shell pwd):/usr/src/app genetic-tsp
+
+test:
+	PYTHONPATH=./ pytest
